@@ -1,0 +1,271 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>The Game of Life</title>
+</head>
+<body>
+    <h1 align="center">The Game of Life</h1>
+    <h2 align="center">
+        Please input a string of 0s and 1s to represent the starting state.
+        Example: "00110101001010111001111...", the minimum characters required is 25 (5x5 matrix).
+    </h2>
+    <p align="center">Please only enter sufficient values to create a square matrix.</p>
+    <br />
+    <div align="center">
+        <input type="text" id="initialState" />
+        <input id="Start" type="button" value="Start" onclick="runGame();" />
+        <br />
+        <h1 id="worldState" align="center"></h1>
+    </div> 
+    <script>
+        // AkitaBox Intern Problem
+        // Garrett Andrews 03/2017
+        // "game of life"
+
+        // main function
+        function runGame() {
+            // do once:
+            // A few placeholder vars:
+            var globWidth = 0;
+            var globHeight;
+            var printingArray;
+            var world;
+            var nextWorld;
+            try {
+                parseInput(document.getElementById("initialState").value);
+            }
+            catch (e) {
+                // invalud number of parameters, do not begin
+                return;
+            }
+            printingArray = worldArray(globWidth);
+            nextWorld = worldArray(globWidth);
+			printWorld();
+            // every 2 seconds, determine next generation & display
+            var timer = setInterval(nextGen, 2000);
+
+            // create the 2D array, or an array of arrays to hold the cell values
+			function worldArray(width) {
+			    var array = [];
+			    // let's make an array with k many array elements, initalized to 0s
+			    for (var i = 0; i < width; i++) {
+			        array[i] = [];
+			        for (var k = 0; k < width; k++) {
+			            array[i][k] = "0";
+			        }
+			    }
+			    return array;
+			}
+
+            // copy nextWorld to world
+			function nextToCurr() {
+			    for (var i = 0; i < globHeight; i++) {
+			        for (var k = 0; k < globWidth; k++) {
+			            world[i][k] = nextWorld[i][k];
+			        }
+			    }
+			}
+
+            // Parsing input for the game.
+            // Here we take the input string and convert it to an array
+            // and then plug the inital values into the 'world' state.
+            // Get the dimensions of the square matrix from the input length.
+			function parseInput(input) {
+			    globWidth = Math.sqrt(input.length)
+                // check if we have a square matrix input
+			    if (globWidth % 1 != 0 || globWidth == 0) {
+			        alert("Invalid number of values.");
+			        throw new Error("Invalud number of values for a square matrix.");
+			    }
+			    globHeight = globWidth; // just to make things clear when traversing
+			    world = worldArray(globWidth);
+			    var parserCt = 0;
+			    var inputArr = [];
+			    inputArr = Array.from(input);
+			    for (var i = 0; i < globWidth; i++) {
+			        for (var k = 0; k < globHeight; k++) {
+			            // check for 0s and 1s only
+			            console.log(inputArr[parserCt]);
+			            if (!(inputArr[parserCt] == '0' || inputArr[parserCt] == '1')) {
+			                alert("Only 0s and 1s allowed.");
+			                throw new Error("Only 0s and 1s allowed.");
+			            }
+			            world[i][k] = inputArr[parserCt];
+			            parserCt++;
+			        }
+			    }
+			}
+
+            // determine the next generation and print the results
+			function nextGen() {
+			    determineLife();
+			    // check if we are at a final state
+			    try {
+			        if (isDone()) {
+			            alert("Final state reached.");
+			            throw new Error("Final state reached.");
+			        }
+			    }
+			    catch (e) {
+			        // final state reached, we can stop executing
+			        clearInterval(timer);
+			    }
+			    nextToCurr();
+			    printingArray = worldArray(globWidth);
+			    printWorld();
+			}
+
+            // Check the current world state and determine which cells need to change
+			function determineLife() {
+			    for (var i = 0; i < globWidth; i++) {
+			        for (var k = 0; k < globHeight; k++) {
+			            var numNeighbors = 0;
+			            console.log(i + ", " + k + ": " + world[i][k]);
+			            //console.log("world testing: " + world[0][1]);
+			            // top left
+			            try {
+			                if (world[i - 1][k - 1] == 1 || world[i - 1][k - 1] == 0) {
+			                    numNeighbors += parseInt(world[i - 1][k - 1]);
+			                }
+			            }
+			            catch (e) {
+			                // out of bounds, skip
+			                // a TypeError exception will be thrown if out of bounds 
+			            }
+			            // top center
+			            try {
+			                if (world[i - 1][k] == 1 || world[i - 1][k] == 0) {
+			                    numNeighbors += parseInt(world[i - 1][k]);
+			                }
+			            }
+			            catch (e) {
+			                // skip
+			            }
+			            // top right
+			            try {
+			                if (world[i - 1][k + 1] == 1 || world[i - 1][k + 1] == 0) {
+			                    numNeighbors += parseInt(world[i - 1][k + 1]);
+			                }
+			            }
+			            catch (e) {
+			                // skip
+			            }
+			            // middle left
+			            try {
+			                if (world[i][k - 1] == 1 || world[i][k - 1] == 0) {
+			                    numNeighbors += parseInt(world[i][k - 1]);
+			                }
+			            }
+			            catch (e) {
+			                // skip
+			            }
+			            // middle center, this is the cell being checked
+			            // numNeighbors += world[i][k];
+			            // middle right
+			            try {
+			                if (world[i][k + 1] == 1 || world[i][k + 1] == 0) {
+			                    numNeighbors += parseInt(world[i][k + 1]);
+			                }
+			            }
+			            catch (e) {
+			                // skip
+			            }
+			            // bottom left
+			            try {
+			                if (world[i + 1][k - 1] == 1 || world[i + 1][k - 1] == 0) {
+			                    numNeighbors += parseInt(world[i + 1][k - 1]);
+			                }
+			            }
+			            catch (e) {
+			                // skip
+			            }
+			            // bottom center
+			            try {
+			                if (world[i + 1][k] == 1 || world[i + 1][k] == 0) {
+			                    numNeighbors += parseInt(world[i + 1][k]);
+			                }
+			            }
+			            catch (e) {
+			                // skip
+			            }
+			            // bottom right
+			            try {
+			                if (world[i + 1][k + 1] == 1 || world[i + 1][k + 1] == 0) {
+			                    numNeighbors += parseInt(world[i + 1][k + 1]);
+			                }
+			            }
+			            catch (e) {
+			                // skip
+			            }
+			            //console.log("2, 3:" + (world[2][3]));
+			            console.log("numNeighbors: " + numNeighbors);
+			            // check the state to determine what happens to the cell
+			            if (parseInt(world[i][k]) == 1) {
+			                // underpopulation:
+			                if (numNeighbors < 2) {
+			                    nextWorld[i][k] = "0";
+			                    console.log("underpop");
+			                }
+
+			                // survival:
+			                if (numNeighbors == 2 || numNeighbors == 3) {
+			                    nextWorld[i][k] = "1";
+			                    console.log("survival");
+			                }
+
+			                // overcrowding:
+			                if (numNeighbors > 3) {
+			                    nextWorld[i][k] = "0";
+			                    console.log("overc");
+			                }
+			            }
+
+			                // else the current cell is dead
+			            else if(parseInt(world[i][k]) == 0) {
+			                // reproduction:
+			                if (numNeighbors == 3) {
+			                    nextWorld[i][k] = "1";
+			                    console.log("repro");
+			                }
+			            }
+			        }
+			    }
+			}
+
+            // check if we have a final state
+			function isDone() {
+			    //var done = true;
+			    for (var i = 0; i < globHeight; i++) {
+			        for (var k = 0; k < globWidth; k++) {
+			            if (nextWorld[i][k] !== world[i][k]) {
+			                return false;
+			            }
+			        }
+			    }
+			    return true;
+			}
+            // prints the current world state to the page
+			function printWorld() {
+			    // copy the world state to a holding array for string conversion and printing
+			    for (var i = 0; i < globHeight; i++) {
+			        for (var k = 0; k < globWidth; k++) {
+			            printingArray[i][k] = world[i][k];
+			        }
+			    }
+			    //printingArray = world;
+			    // convert elements to strings
+			    for (var i = 0; i < globWidth; i++) {
+			        printingArray[i] = Array.prototype.join.call(printingArray[i], ' ');
+			    }
+			    document.getElementById("worldState").innerHTML = printingArray.join('<br />');
+			    console.log("printed:" + printingArray.join('<br />'));
+			}
+        }
+        // Things that could be added/improved:
+        // 1. Add a Stop and Step button for more control
+        // 2. Allow non square matrices
+    </script>
+</body>
+</html>
