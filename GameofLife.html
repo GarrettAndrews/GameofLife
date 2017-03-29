@@ -16,6 +16,7 @@
     <div align="center">
         <input type="text" id="initialState" />
         <input id="Start" type="button" value="Start" onclick="runGame();" />
+        <input id="Restart" type="button" value="Restart (No final state)" onclick="resetGame();" />
         <br />
         <h1 id="worldState" align="center"></h1>
     </div> 
@@ -44,7 +45,7 @@
             nextWorld = worldArray(globWidth);
 			printWorld();
             // every 2 seconds, determine next generation & display
-            var timer = setInterval(nextGen, 2000);
+			var timer = setInterval(nextGen, 2000);
 
             // create the 2D array, or an array of arrays to hold the cell values
 			function worldArray(width) {
@@ -262,6 +263,11 @@
 			    document.getElementById("worldState").innerHTML = printingArray.join('<br />');
 			    console.log("printed:" + printingArray.join('<br />'));
 			}
+        }
+
+        // reset if we encounter an infinite execution with final state pair
+        function resetGame() {
+            window.location.reload(false);
         }
         // Things that could be added/improved:
         // 1. Add a Stop and Step button for more control
