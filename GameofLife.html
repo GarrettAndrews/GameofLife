@@ -4,20 +4,24 @@
 <head>
     <meta charset="utf-8" />
     <title>The Game of Life</title>
+    <style>
+        .bordered {
+            padding: 20px;
+            border: 10px outset yellowgreen;
+        }
+    </style>
 </head>
-<body style="background-color:goldenrod">
+<body style="background-color:goldenrod" class="bordered">
     <h1 align="center">The Game of Life</h1>
     <h3 align="center">Please input a string of 0s and 1s to represent the starting state.</h3>
     <h3 align="center">Example: "00110101001010111001111...", the minimum characters required is 25 (5x5 matrix).</h3>
-    <div>
-        <h2 align="center">Some background:</h2>
-        <p align="center">0s represent 'dead' cells and 1s represent 'live' cells.</p>
-        <p align="center">-A cell can have up to 8 neighbors  (top, topright, right, bottomright, bottom, bottomleft, left, topleft).</palign="center">
-        <p align="center">-Any live cell with fewer than two live neighbors dies (under-population).</palign="center">
-        <p align="center">-Any live cell with two or three live neighbours lives on to the next generation (survival).</palign="center">
-        <p align="center">-Any live cell with more than three live neighbours dies (overcrowding).</palign="center">
-        <p align="center">-Any dead cell with exactly three live neighbours becomes a live cell (reproduction).</palign="center">
-    </div>
+    <h2 align="center">Some background:</h2>
+    <p align="center">0s represent 'dead' cells and 1s represent 'live' cells.</p>
+    <p align="center">-A cell can have up to 8 neighbors  (top, topright, right, bottomright, bottom, bottomleft, left, topleft).</palign="center">
+    <p align="center">-Any live cell with fewer than two live neighbors dies (under-population).</palign="center">
+    <p align="center">-Any live cell with two or three live neighbours lives on to the next generation (survival).</palign="center">
+    <p align="center">-Any live cell with more than three live neighbours dies (overcrowding).</palign="center">
+    <p align="center">-Any dead cell with exactly three live neighbours becomes a live cell (reproduction).</palign="center">
     <br />
     <p align="center">Please only enter sufficient values to create a square matrix.</p>
     <br />
@@ -84,7 +88,7 @@
 			function parseInput(input) {
 			    globWidth = Math.sqrt(input.length)
                 // check if we have a square matrix input
-			    if (globWidth % 1 != 0 || globWidth == 0) {
+			    if (globWidth % 1 != 0 || globWidth == 0 || globWidth < 5) {
 			        alert("Invalid number of values.");
 			        throw new Error("Invalud number of values for a square matrix.");
 			    }
